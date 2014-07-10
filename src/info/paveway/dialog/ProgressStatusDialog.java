@@ -1,6 +1,5 @@
 package info.paveway.dialog;
 
-import info.paveway.mapmemo.CommonConstants.ExtraKey;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -14,6 +13,9 @@ import android.support.v4.app.DialogFragment;
  */
 public class ProgressStatusDialog extends DialogFragment {
 
+    public static final String TITLE_KEY = "title";
+    public static final String MESSAGE_KEY = "meesage";
+
     private static ProgressDialog mProgressDialog = null;
 
     // インスタンス生成はこれを使う
@@ -22,8 +24,8 @@ public class ProgressStatusDialog extends DialogFragment {
 
         // ダイアログにパラメータを渡す
         Bundle arguments = new Bundle();
-        arguments.putString(ExtraKey.PROGRESS_TITLE, title);
-        arguments.putString(ExtraKey.PROGRESS_MESSAGE, message);
+        arguments.putString(TITLE_KEY, title);
+        arguments.putString(MESSAGE_KEY, message);
         instance.setArguments(arguments);
 
         return instance;
@@ -37,8 +39,8 @@ public class ProgressStatusDialog extends DialogFragment {
         }
 
         // パラメータを取得
-        String title = getArguments().getString(ExtraKey.PROGRESS_TITLE);
-        String message = getArguments().getString(ExtraKey.PROGRESS_MESSAGE);
+        String title = getArguments().getString(MESSAGE_KEY);
+        String message = getArguments().getString(MESSAGE_KEY);
 
         mProgressDialog = new ProgressDialog(getActivity());
         mProgressDialog.setTitle(title);

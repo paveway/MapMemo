@@ -29,8 +29,8 @@ public abstract class AbstractBaseLoaderCallbacks implements LoaderCallbacks<Str
     /** ハンドラー */
     protected Handler mHandler = new Handler();
 
-    /** ID */
-    protected int mId;
+    /** ローダーID */
+    protected int mLoaderId;
 
     /** バンドル */
     protected Bundle mBundle;
@@ -59,12 +59,12 @@ public abstract class AbstractBaseLoaderCallbacks implements LoaderCallbacks<Str
     /**
      * 生成された時に呼び出される。
      *
-     * @param id ローダーID
+     * @param loaderId ローダーID
      * @param bundle 引き渡されたデータ
      */
     @Override
-    public Loader<String> onCreateLoader(int id, Bundle bundle) {
-        mLogger.i("IN id=[" + id + "]");
+    public Loader<String> onCreateLoader(int loaderId, Bundle bundle) {
+        mLogger.i("IN loaderId=[" + loaderId + "]");
 
         // 処理状態表示ダイアログを表示する場合
         if (isShowProgressStatusDialog()) {
@@ -79,7 +79,7 @@ public abstract class AbstractBaseLoaderCallbacks implements LoaderCallbacks<Str
             mProgressDialog.show(manager, ProgressStatusDialog.class.getSimpleName());
         }
 
-        mId = id;
+        mLoaderId = loaderId;
         mBundle = bundle;
         Loader<String> loader = createLoader(bundle);
         loader.forceLoad();
@@ -111,7 +111,7 @@ public abstract class AbstractBaseLoaderCallbacks implements LoaderCallbacks<Str
         }
 
         // 対象のローダーの場合
-        if (loader.getId() == mId) {
+        if (loader.getId() == mLoaderId) {
             // レスポンス文字列がある場合
             if (StringUtil.isNotNullOrEmpty(response)) {
                 // 終了時の処理を行う。

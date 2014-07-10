@@ -1,14 +1,13 @@
 package info.paveway.mapmemo;
 
 /**
+ * マップメモ
  * 共通定数クラス
  *
  * @version 1.0 新規作成
  *
  */
 public class CommonConstants {
-
-    public static final String PLACES_API_KEY = "AIzaSyBfJZ3gRs_WKPWDCr11oCYe_U9hqVZKlMc";
 
     /**
      * URL定数
@@ -24,20 +23,49 @@ public class CommonConstants {
      *
      */
     public class ParamKey {
-        /** URLキー */
+        /** URL */
         public static final String URL = "url";
+
+        /** ステータス */
+        public static final String STATUS = "status";
+
+        /** 結果 */
         public static final String RESULTS = "results";
+
+        /** 位置 */
         public static final String GEOMETRY = "geometry";
+
+        /** ロケーション */
         public static final String LOCATION = "location";
+
+        /** 緯度 */
         public static final String LAT = "lat";
+
+        /** 経度 */
         public static final String LNG = "lng";
+
+        /** アイコン */
         public static final String ICON = "icon";
+
+        /** ID */
         public static final String ID = "id";
+
+        /** 名前 */
         public static final String NAME = "name";
+
+        /** プレースID */
         public static final String PLACE_ID = "place_id";
+
+        /** リファレンス */
         public static final String REFERENCE = "reference";
+
+        /** スコープ */
         public static final String SCOPE = "scope";
+
+        /** タイプ */
         public static final String TYPES = "types";
+
+        /** 周辺 */
         public static final String VICINITY = "vicinity";
     }
 
@@ -51,37 +79,7 @@ public class CommonConstants {
     }
 
     /**
-     * Extraキー定数
-     *
-     */
-    public class ExtraKey {
-        /** ユーザデータ */
-        public static final String USER_DATA = "userData";
-
-        /** ルームデータ */
-        public static final String ROOM_DATA = "roomData";
-
-        /** 進捗ダイアログタイトル */
-        public static final String PROGRESS_TITLE = "progressTitle";
-
-        /** 進捗ダイアログメッセージ */
-        public static final String PROGRESS_MESSAGE = "progressMessage";
-
-        /** ユーザ緯度 */
-        public static final String USER_LATITUDE = "userLatutide";
-
-        /** ユーザ経度 */
-        public static final String USER_LONGITUDE = "userLongitude";
-
-        /** メモ緯度 */
-        public static final String MEMO_LATITUDE = "memoLatitude";
-
-        /** メモ経度 */
-        public static final String MEMO_LONGITUDE = "memoLongitude";
-    }
-
-    /**
-     * エンコーディング
+     * エンコーディング定数
      *
      */
     public class Encoding {
@@ -90,26 +88,32 @@ public class CommonConstants {
     }
 
     /**
-     * 要求コード定数
+     * 言語定数
      *
      */
-    public class RequestCode {
-        /** 設定画面 */
-        public static final int SETTINGS = 1;
-
-        /** 接続エラー解決要求 */
-        public static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+    public class Language {
+        /** 日本 */
+        public static final String JA = "ja";
     }
 
-    public class Action {
-        public static final String ACTION_LOCATION = "info.paveway.hereclient.ACTION_LOCATION";
+    /**
+     * プレースレスポンスステータス定数
+     *
+     */
+    public class PlaceResponseStatus {
+        /** OK */
+        public static final String OK = "OK";
 
-        public static final String ACTION_LOCATION_FAILED = "info.paveway.hereclient.ACTION_LOCATION_FAILED";
-    }
+        /** 結果0件 */
+        public static final String ZERO_RESULTS = "ZERO_RESULTS";
 
-    public class MemoRangeValue {
-        public static final int SELF = 1;
-        public static final int MEMBER = 2;
-        public static final int ALL = 3;
+        /** 検索結果件数オーバー */
+        public static final String OVER_QUERY_LIMIT = "OVER_QUERY_LIMIT";
+
+        /** 許可されないリクエスト */
+        public static final String REQUEST_DENIED = "REQUEST_DENIED";
+
+        /** 無効なリクエスト */
+        public static final String INVALID_REQUEST = "INVALID_REQUEST";
     }
 }

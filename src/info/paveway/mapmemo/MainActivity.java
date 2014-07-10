@@ -1,17 +1,18 @@
 package info.paveway.mapmemo;
 
-import info.paveway.loader.HttpGetLoaderCallbacks;
+import info.paveway.loader.HttpGetLoader;
+import info.paveway.loader.HttpLoaderCallbacks;
 import info.paveway.log.Logger;
 import info.paveway.loader.OnReceiveResponseListener;
+import info.paveway.mapmemo.CommonConstants.Language;
 import info.paveway.mapmemo.CommonConstants.LoaderId;
 import info.paveway.mapmemo.CommonConstants.ParamKey;
+import info.paveway.mapmemo.CommonConstants.PlaceResponseStatus;
 import info.paveway.mapmemo.CommonConstants.Url;
 import info.paveway.mapmemo.data.PlaceData;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -20,6 +21,7 @@ import org.json.JSONObject;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
@@ -44,14 +46,20 @@ public class MainActivity extends ActionBarActivity {
     /** Googleマップ */
     private GoogleMap mGoogleMap;
 
-    private List<PlaceData> mPlaceDataList = new ArrayList<PlaceData>();
+    /** プレースデータマップ */
+    private static Map<String, PlaceData> mPlaceDataMap = new HashMap<String, PlaceData>();
 
-    /** マーカーマップ */
-    private static Map<String, Marker> mMarkerMap = new HashMap<String, Marker>();
-
+    /**
+     * 生成された時に呼び出される。
+     *
+     * @param savedInstanceState 保存された時のインスタンスの状態
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // スーパークラスのメソッドを呼び出す。
         super.onCreate(savedInstanceState);
+
+        // レイアウトを設定する。
         setContentView(R.layout.activity_main);
 
         // マップフラグメントを取得する。
@@ -60,9 +68,9 @@ public class MainActivity extends ActionBarActivity {
             // マップオブジェクトを取得する。
             mGoogleMap = mapFragment.getMap();
 
-            // Activityが初めて生成された場合
+            // アクティビティが初めて生成された場合
             if (null == savedInstanceState) {
-                // フラグメントを保存する。
+                // フラグメントを再初期化しないように設定する。
                 mapFragment.setRetainInstance(true);
 
                 // 地図の初期設定を行う。
@@ -70,14 +78,12 @@ public class MainActivity extends ActionBarActivity {
             }
         } catch (Exception e) {
             mLogger.e(e);
+            // 終了する。
             finish();
             return;
         }
     }
 
-    /**************************************************************************/
-    /*** 内部メソッド                                                       ***/
-    /**************************************************************************/
     /**
      * 地図の初期化を行う。
      */
@@ -97,7 +103,6 @@ public class MainActivity extends ActionBarActivity {
 
         mLogger.d("OUT(OK)");
     }
-
 
     /**************************************************************************/
     /**
@@ -120,19 +125,32 @@ public class MainActivity extends ActionBarActivity {
 
             // パラメータを生成する。
             Bundle params = new Bundle();
-            String url = createUrl(CommonConstants.PLACES_API_KEY, latlng, "ja", 500, false, "food");
+            String apiKey = getResources().getString(R.string.place_api_key);
+            String url = createGetPlaceDataUrl(apiKey, latlng, Language.JA, 100, false, "food");
+            mLogger.d("URL=[" + url + "]");
             params.putString(ParamKey.URL, url);
 
             // HTTP GETローダーをロードする。
             getSupportLoaderManager().restartLoader(
-                    LoaderId.PLACES, params, new HttpGetLoaderCallbacks(
-                            MainActivity.this, new HttpOnReceiveResponseListener()));
+                    LoaderId.PLACES, params, new HttpLoaderCallbacks(
+                            MainActivity.this, new HttpOnReceiveResponseListener(), HttpGetLoader.class));
 
             mLogger.d("OUT(OK)");
         }
     }
 
-    private String createUrl(String key, LatLng latlng, String language, int radius, boolean sensor, String types) {
+    /**
+     * プレースデータ取得URLを生成する。
+     *
+     * @param key APIキー
+     * @param latlng 位置情報
+     * @param language 言語
+     * @param radius 検索範囲(メートル単位)
+     * @param sensor GPSセンサー有無(true:有 / false:無)
+     * @param types 検索タイプ
+     * @return プレースデータ取得URL文字列
+     */
+    private String createGetPlaceDataUrl(String key, LatLng latlng, String language, int radius, boolean sensor, String types) {
         StringBuilder sb = new StringBuilder();
         sb.append(Url.BASE);
         sb.append("?key=" + key);
@@ -167,9 +185,26 @@ public class MainActivity extends ActionBarActivity {
             try {
                 // JSON文字列を生成する。
                 JSONObject json = new JSONObject(response);
+                String status = json.getString(ParamKey.STATUS);
+
+                // ステータスがOKではない場合
+                if (!PlaceResponseStatus.OK.equals(status)) {
+                    // 終了する。
+                    Toast.makeText(MainActivity.this, "status=[" + status + "]", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // プレースデータマップをクリアする。
+                clearPlaceDataMap();
+
                 JSONArray results = json.getJSONArray(ParamKey.RESULTS);
+
+                // 結果数を取得する。
                 int resultsNum = results.length();
+
+                // 結果数分繰り返す。
                 for (int i = 0; i < resultsNum; i++) {
+                    // プレースデータを生成する。
                     PlaceData placeData = new PlaceData();
 
                     JSONObject result = results.getJSONObject(i);
@@ -187,9 +222,11 @@ public class MainActivity extends ActionBarActivity {
                     placeData.setTypes(    result.getString(  ParamKey.TYPES));
                     placeData.setVicinity( result.getString(  ParamKey.VICINITY));
 
+                    // マーカーを設定する。
                     setPlaceMarker(placeData);
 
-                    mPlaceDataList.add(placeData);
+                    // プレースデータマップに設定する。
+                    mPlaceDataMap.put(placeData.getName(), placeData);
                 }
             } catch (JSONException e) {
                 mLogger.e(e);
@@ -200,51 +237,36 @@ public class MainActivity extends ActionBarActivity {
     }
 
     /**
-     * 位置マーカーを設定する。
+     * プレースマーカーを設定する。
      *
-     * @param data 位置データ
+     * @param data プレースデータ
      */
     private void setPlaceMarker(PlaceData data) {
         mLogger.d("IN");
 
-        String name = data.getName();
-
-        // IDのマーカーを取得する。
-        Marker marker = mMarkerMap.get(name);
-        // 取得できた場合
-        if (null != marker) {
-            // マーカーを削除する。
-            mLogger.d("Marker exist.");
-            marker.remove();
-            mMarkerMap.remove(name);
-
-        } else {
-            mLogger.d("Marker not exist.");
-        }
-
         MarkerOptions options = new MarkerOptions();
         options.position(new LatLng(data.getLat(), data.getLng()));
-        options.title(name);
+        options.title(data.getName());
         options.snippet(data.getVicinity());
-        mMarkerMap.put(name, mGoogleMap.addMarker(options));
+        data.setMarker(mGoogleMap.addMarker(options));
 
         mLogger.d("OUT(OK)");
     }
 
     /**
-     * 位置マーカーをクリアする。
+     * プレースデータマップをクリアする。
      *
      */
-    private void clearPlaceMarker() {
+    private void clearPlaceDataMap() {
         mLogger.d("IN");
 
-        Iterator<String> itr = mMarkerMap.keySet().iterator();
+        Iterator<String> itr = mPlaceDataMap.keySet().iterator();
         while (itr.hasNext()) {
             String name = itr.next();
-            Marker marker = mMarkerMap.get(name);
+            Marker marker = mPlaceDataMap.get(name).getMarker();
             marker.remove();
-            mMarkerMap.remove(name);
         }
+        mPlaceDataMap.clear();
 
         mLogger.d("OUT(OK)");
     }

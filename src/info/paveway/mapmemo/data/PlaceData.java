@@ -2,6 +2,8 @@ package info.paveway.mapmemo.data;
 
 import java.io.Serializable;
 
+import com.google.android.gms.maps.model.Marker;
+
 /**
  * マップメモ
  * プレースデータクラス
@@ -42,6 +44,9 @@ public class PlaceData implements Serializable {
     /** 周辺 */
     private String mVicinity;
 
+    /** マーカー */
+    private Marker mMarker;
+
     /**
      * IDを設定する。
      *
@@ -51,79 +56,192 @@ public class PlaceData implements Serializable {
         mId = id;
     }
 
+    /**
+     * IDを返却する。
+     *
+     * @return ID
+     */
     public String getId() {
         return mId;
     }
 
+    /**
+     * 名前を設定する。
+     *
+     * @param name 名前
+     */
     public void setName(String name) {
         mName = name;
     }
 
+    /**
+     * 名前を返却する。
+     *
+     * @return 名前
+     */
     public String getName() {
         return mName;
     }
 
+    /**
+     * プレースIDを設定する。
+     *
+     * @param placeId プレースID
+     */
     public void setPlaceId(String placeId) {
         mPlaceId = placeId;
     }
 
+    /**
+     * プレースIDを返却する。
+     *
+     * @return プレースID
+     */
     public String getPlaceId() {
         return mPlaceId;
     }
 
+    /**
+     * 緯度を設定する。
+     *
+     * @param lat 緯度
+     */
     public void setLat(double lat) {
         mLat = lat;
     }
 
+    /**
+     * 緯度を返却する。
+     *
+     * @return 緯度
+     */
     public double getLat() {
         return mLat;
     }
 
+    /**
+     * 経度を設定する。
+     *
+     * @param lng 経度
+     */
     public void setLng(double lng) {
         mLng = lng;
     }
 
+    /**
+     * 経度を返却する。
+     *
+     * @return 経度
+     */
     public double getLng() {
         return mLng;
     }
 
+    /**
+     * アイコンURLを設定する。
+     *
+     * @param icon アイコンURL
+     */
     public void setIcon(String icon) {
         mIcon = icon;
     }
 
+    /**
+     * アイコンURLを返却する。
+     *
+     * @return アイコンURL
+     */
     public String getIcon() {
         return mIcon;
     }
 
+    /**
+     * リファレンスを設定する。
+     *
+     * @param reference リファレンス
+     */
     public void setReference(String reference) {
         mReference = reference;
     }
 
+    /**
+     * リファレンスを返却する。
+     *
+     * @return リファレンス
+     */
     public String getReference() {
         return mReference;
     }
 
+    /**
+     * スコープを設定する。
+     *
+     * @param scope スコープ
+     */
     public void setScope(String scope) {
         mScope = scope;
     }
 
+    /**
+     * スコープを返却する。
+     *
+     * @return スコープ
+     */
     public String getScope() {
         return mScope;
     }
 
+    /**
+     * タイプを設定する。
+     *
+     * @param types タイプ
+     */
     public void setTypes(String types) {
         mTypes = types;
     }
 
+    /**
+     * タイプを返却する。
+     *
+     * @return タイプ
+     */
     public String getTypes() {
         return mTypes;
     }
 
+    /**
+     * 周辺を設定する。
+     *
+     * @param vicinity 周辺
+     */
     public void setVicinity(String vicinity) {
         mVicinity = vicinity;
     }
 
+    /**
+     * 周辺を返却する。
+     *
+     * @return 周辺
+     */
     public String getVicinity() {
         return mVicinity;
+    }
+
+    /**
+     * マーカーを設定する。
+     *
+     * @param marker マーカー
+     */
+    public void setMarker(Marker marker) {
+        mMarker = marker;
+    }
+
+    /**
+     * マーカーを返却する。
+     *
+     * @return マーカー
+     */
+    public Marker getMarker() {
+        return mMarker;
     }
 }

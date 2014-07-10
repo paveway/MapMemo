@@ -3,5 +3,6 @@
 
     <string name="app_name">MapMemo</string>
     <string name="hello_world">Hello world!</string>
+    <string name="place_api_key">AIzaSyBfJZ3gRs_WKPWDCr11oCYe_U9hqVZKlMc</string>
 
 </resources>
